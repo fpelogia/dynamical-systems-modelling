@@ -1,0 +1,596 @@
+%\documentclass[a4paper,12pt]{article}
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{amsmath,amsfonts,amsthm,amstext,amssymb}
+\usepackage[brazil]{babel}
+
+\usepackage{color}      
+\usepackage[utf8]{inputenc}
+
+\usepackage{csquotes}
+\usepackage[backend = bibtex,style=numeric-comp,sorting=nyt,date=year,isbn=false,maxnames=10]{biblatex}
+\addbibresource{bibliografianova.bib}
+%\usepackage[a4paper,top=2cm,bottom=2cm,left=1cm,right=1cm]{geometry}
+\usepackage[a4paper, total={6in, 9in}]{geometry}
+%\usepackage{setspace} \onehalfspacing
+\usepackage{lastpage}
+\usepackage{float}
+\usepackage{verbatim}
+\usepackage{listingsutf8}
+\usepackage{xcolor}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+
+
+\newcommand{\tb}{\mathbf{t}}
+\newcommand{\RRR}{\mathbf{R}}
+\newcommand{\bsrho}{\boldsymbol{\rho}}
+\newcommand{\uu}{\mathbf{u}}
+\newcommand{\fm}{\mathbf{f}}
+\newcommand{\ds}{\displaystyle}
+
+\usepackage{multirow}
+\usepackage[normalem]{ulem}
+\useunder{\uline}{\ul}{}
+%\usepackage{indentfirst}	
+\usepackage{parskip}
+\setlength{\parskip}{0.5cm}
+\usepackage{courier}
+\DeclareUnicodeCharacter{2212}{-}
+
+
+
+%\lstset { %
+%    language=C++,
+%    basicstyle=\footnotesize\ttfamily,% basic font setting
+%}
+\usepackage{pythonhighlight}
+\lstset{language=Python,
+    numberstyle=\footnotesize,
+    basicstyle=\ttfamily\footnotesize,
+    numbers=left,
+    stepnumber=1,
+    frame=shadowbox,
+    breaklines=true,
+    frame=bottomline,
+    keywordstyle=\color{blue}\bfseries,
+}
+
+\makeatother
+\begin{document}
+\begin{titlepage}
+   \begin{center}
+       \vspace*{1.5cm}
+ 
+       \Large
+       \textbf{Lista 2 - Controle de Sistemas Dinâmicos}\\
+       Solução Computacional de Equações Diferenciais \\
+ 	   \normalsize
+       \vspace{5.5cm}
+        \textbf{Aluno:} Frederico José Ribeiro Pelogia
+        
+       \vspace{0.25cm}
+	\textbf{RA:} 133619
+ 
+       \vspace{0.25cm}
+	\textbf{Turma:} N
+       
+       \vfill
+
+ 
+ 
+       Departamento de Ciência e Tecnologia\\
+       Universidade Federal de São Paulo\\
+       Dezembro de 2020
+       %-- de -------- de 2020
+ 
+   \end{center}
+\end{titlepage}
+
+\tableofcontents
+
+\newpage
+
+\section*{Consideração sobre as Simulações}
+O presente relatório apresenta soluções às questões propostas na segunda lista de exercícios da unidade curricular Controle de Sistemas Dinâmicos, utilizando como material de apoio a apostila \cite{odeSimulink}. As simulações computacionais utilizaram a biblioteca científica \textbf{scipy} \cite{scipy} da linguagem de programação Python. Para cada sistema simulado será apresentada uma breve discussão sobre as EDOs, um diagrama de blocos, o código na íntegra, os gráficos gerados e uma discussão sobre os resultados. 
+
+\section*{Sobre a biblioteca Scipy}
+Para a integração numérica das EDOs e solução dos problemas de valor inicial associados aos modelos simulados, foi utilizada a função \pyth{scipy.integrate.solve_ivp()}. Essa função utiliza, por padrão, um método RK45 \cite{RK45} (Runge-Kutta) e integra um sistema de equações diferenciais ordinárias, dadas condições iniciais, recebendo-o na forma
+$$\frac{dy}{dt} = f(t,y),$$
+$$y(0) = y0.$$
+A variável y pode ser um vetor com diferentes equações diferenciais, que serão integradas simultaneamente. Assim, para resolver sistemas de ordem superior com a função em questão, é recomendado explicitar as relações entre cada derivada. Por exemplo, uma EDO de segunda ordem da forma $\ddot{x} = a\dot{x} + bx$ deveria ser enviado como $$\frac{d}{dt}\begin{pmatrix}\dot{x} \\ x\end{pmatrix} = \begin{pmatrix}a\dot{x} + bx \\ \dot{x}\end{pmatrix}$$ 
+
+A Figura \ref{fig:args} apresenta, em detalhe, os argumentos que devem ser passados à função.
+
+\begin{figure}[H]
+\center
+    \includegraphics [scale = 0.65]{Figures/args.png}
+    \caption{Argumentos da função \pyth{solve_ivp}. Fonte: Autor}
+    \label{fig:args}
+\end{figure}
+
+\section{Newton's Law of Cooling}
+
+O primero exercício propõe a resolução do seguinte problema:
+
+    A temperatura de dentro da sua casa é de \textbf{70°F} e a do lado de fora (ambiente) é de \textbf{30°F}. Às \textbf{1:00} a fornalha parou de funcionar. Às \textbf{3:00} a temperatura na casa caiu para \textbf{50°F}. Assumindo que a temperatura de fora da casa é constante e que a Lei do Resfriamento de Newton se aplica, determine quando a temperatura de dentro da sua casa atingirá \textbf{40°F.}
+
+A Lei do Resfriamento de Newton é descrita pela EDO
+$$\frac{dT}{dt} = -k(T(t) - T_a),$$
+que revela que a variação temporal da temperatura de um corpo em um certo instante é proporcional à diferença da temperatura do mesmo com a temperatura dos seus arredores \cite{odeSimulink}.
+Assim, pode-se também escrever a lei como
+$$T(t) = T_a + (T_0 - T_a)e^{-k t}.$$
+
+A apostila \cite{odeSimulink} apresenta, na Figura \ref{fig:block_newton}, uma representação da lei como um diagrama de blocos.
+
+\begin{figure}[H]
+\center
+    \includegraphics [scale = 0.65]{Figures/newton.png}
+    \caption{Diagrama de Blocos para a Lei do Resfriamento de Newton. Fonte: \cite{odeSimulink}}
+    \label{fig:block_newton}
+\end{figure}
+
+
+Embora o problema seja simples e o valor da constante $k$ pudesse ser obtido analiticamente, foi optado por descobri-lo por tentativa e erro, através dos resultados das simulações. O código referente ao modelo da Lei do Resfriamento de Newton está apresentado no Listing \ref{lst:newton_cooling}.
+
+
+\begin{python}
+#Imports
+import numpy as np
+from scipy.integrate import solve_ivp
+import matplotlib.pyplot as plt
+
+#Define constants
+T0 = 70 # Initial temperature inside (F)
+Ta = 30 # Initial temperature outside (F)
+k = 0.35# cooling constant (hours^(-1))
+
+# Teste 1: k = 0.5
+# Teste 2: k = 0.25
+# Teste 3: k = 0.45
+# Teste 4: k = 0.35 
+
+t_arr = np.linspace(0,5,1000) # array with sampling times
+
+# Newton's Law of Cooling)
+# T' = -k(T - Ta)
+# dy/dy = func(...)
+# y = [T]
+def func(t,y,k,Ta):
+    T = y
+    return -k*(T - Ta)
+
+#Solve the ODE using scipy.integrate.solve_ivp (initial value problem)
+sol = solve_ivp(func, (0,5),[T0], args=(k,Ta), t_eval = t_arr)
+
+#Plot Solution
+fig, ax = plt.subplots()
+ax.plot(sol.t, sol.y[0])
+ax.set(xlabel='Elapsed Time (h)', ylabel='Temperature (F)',
+       title='Temperature Decay')
+ax.grid()
+
+#Search time with T ~= 40 F
+diff = (sol.y[0]-40)**2
+sample_40f = np.where( diff == np.amin(diff))[0][0]
+t_40f = sol.t[sample_40f]
+ax.scatter(t_40f, sol.y[0][sample_40f], c = 'red', label = 
+           f'T({t_40f:.2f} h) = {sol.y[0][sample_40f]:.2f} F')
+ax.legend()
+plt.show()
+print(f'\nThe temperature got closer to 40 F at time t = {t_40f:.2f} h\n')
+\end{python}
+\begin{lstlisting}[frame=none,caption={Código para a Lei de Resfriamento de Newton},captionpos=t,label=lst:newton_cooling]
+\end{lstlisting}
+
+
+A Figura \ref{fig:ex1} apresenta os resultados das simulações para diferentes valores de $k$. A constante $k$ recebeu inicialmente o valor 0.5 e depois foi sendo refinada até que a temperatura após 2 horas fosse de 50ºF, como no enunciado.
+\begin{figure}[H]
+\center
+    \includegraphics [scale = 0.4]{Figures/ex1.png}
+    \caption{Simulação para a Lei do Resfriamento de Newton, refinando o valor da constante $k$. Fonte: Autor}
+    \label{fig:ex1}
+\end{figure}
+Da Figura \ref{fig:ex1}, perceba que o valor que mais satisfez a condição inicial, demarcada pelo círculo preto, foi $k = 0.35$. Para esse teste, temos que o interior da casa atinge uma temperatura próxima de 40°F após $3.96\ h\approx 3\ h\ 58\  \text{min}$. 
+
+Assim, a temperatura de interesse foi atingida às \textbf{4:58}.
+
+
+\section{Projectile Motion Model}
+O segundo exercício envolve a simulação do movimento de um projétil lançado ao ar e que está sujeito ao atrito do ar, conhecido por arrasto (\textit{drag}) e usualmente representado pelo coeficiente $k$. A Figura \ref{fig:proj}, retirada da apostila \cite{odeSimulink}, representa o  modelo por um diagrama de blocos.
+
+\begin{figure}[H]
+\center
+    \includegraphics [scale = 0.65]{Figures/projectile.png}
+    \caption{Diagrama de Blocos para o modelo de lançamento de projétil. Fonte: \cite{odeSimulink}}
+    \label{fig:proj}
+\end{figure}
+Note que as integrações são feitas simultaneamente, com a utilização de um vetor com a velocidade em x e em y. Sendo $x$ e $y$ a posição do projétil em x e em y.
+$$\begin{pmatrix}\ddot{x}\\ \ddot{y}\end{pmatrix}= -\begin{pmatrix}g_x\\ g_y\end{pmatrix}−k\sqrt{\dot{x}^2+\dot{y}^2}\begin{pmatrix}\dot{x}\\ \dot{y}\end{pmatrix}$$
+
+A passagem do sistema de EDOs para a simulação será feita de forma semelhante, mas com a adição da posição em x e y ao vetor, para informar que a derivada desses valores corresponde à velocidade do projétil no respectivo eixo. Portanto, a formulação utilizada para o código será 
+$$\frac{d}{dt}\begin{pmatrix}\dot{x}\\ \dot{y} \\ x\\ y\end{pmatrix} = \begin{pmatrix}-g_x -k\dot{x}\sqrt{\dot{x}^2+\dot{y}^2}\\ -g_x -k\dot{y}\sqrt{\dot{x}^2+\dot{y}^2}\\ \dot{x}\\ \dot{y}\end{pmatrix}.$$
+
+O Listing \ref{lst:projectile} apresenta o código na íntegra.
+
+\begin{python}
+#Imports
+import numpy as np
+from scipy.integrate import solve_ivp
+import matplotlib.pyplot as plt
+
+def projectile_motion(V0, neg_g, pos0, drag, t_arr):
+    #V0: initial (x, y) velocity (m/s)
+    #neg_g: -1*gravitational acceleration (m/s^2)
+    #pos0: initial position (m)
+    #drag : air drag
+    #t_arr : array with sampling times
+
+    # Define the ODE
+    # dy/dt = func(...)
+    # y = [vx, vy, posx, posy]
+    def func(t, y, neg_g, drag):
+        acc_x = neg_g[0] - y[0]*drag*np.sqrt(y[0]**2 + y[1]**2)
+        acc_y = neg_g[1] - y[1]*drag*np.sqrt(y[0]**2 + y[1]**2)
+        return [acc_x, acc_y, y[0], y[1]]
+
+
+    #Solve the ODE using scipy.integrate.solve_ivp (initial value problem)
+    sol = solve_ivp(func, [0,50],[V0[0], V0[1], pos0[0], pos0[1]],args=(neg_g, drag)
+    , t_eval = t_arr)
+
+    v_mag = np.sqrt(sol.y[0]**2 + sol.y[1]**2)
+
+    # Plotting
+    fig, axs = plt.subplots(1, 3, figsize=(14,4))
+    fig.suptitle(f'Projectile Motion Model: V0 = {V0}, pos0 = {pos0}, drag = {drag}, neg_g = {neg_g}')
+    above_floor = sol.y[3] >= 0
+    axs[1].plot(sol.t[above_floor], sol.y[3][above_floor])
+    axs[1].set(xlabel='Elapsed Time(s)', ylabel='Y Position (m)')
+    axs[1].grid()
+    axs[0].plot(sol.t[above_floor], v_mag[above_floor])
+    axs[0].set(xlabel='Elapsed Time (s)', ylabel='Velocity Magnitude (m/s)')
+    axs[0].grid()
+    axs[2].plot(sol.y[2][above_floor], sol.y[3][above_floor])
+    axs[2].set(xlabel='X Position (m)', ylabel='Y Position (m)')
+    axs[2].grid()
+    plt.show()
+
+# ========================================================================
+# Define inputs
+V0 = [24.384, 24.384] #(80 ft/s ~ 24.384 m/s)
+neg_g = [0, -9.7536] #(32 ft/s^2 ~ 9.7536 m/s^2)
+pos0 = [0, 1.2192]#(4ft ~ 1.2192 m) 
+drag = 0.25
+t_arr = np.linspace(0,50,10000)
+
+projectile_motion(V0, neg_g, pos0, drag, t_arr)
+\end{python}
+\begin{lstlisting}[frame=none,caption={Código para o modelo de lançamento de projétil},captionpos=t,label=lst:projectile]
+\end{lstlisting}
+
+Para cada um dos testes realizados, foram gerados 3 gráficos:
+\begin{itemize}
+    \item Tempo x Magnitude da Velocidade. Onde a magnitude da velocidade é  $\sqrt{\dot{v}^T \dot{v}} = \sqrt{\dot{x}^2+\dot{y}^2}$
+    \item Tempo x Posição em Y (altitude).
+    \item Posição em X x Posição em Y.
+\end{itemize}
+
+A Figura \ref{fig:obl} apresenta testes com um lançamento oblíquo utilizando diferentes valores para o coeficiente de arrasto.
+
+\begin{figure}[H]
+\center
+    \includegraphics [scale = 0.5]{Figures/ex2_obl.png}
+    \caption{Simulações com lançamento oblíquo do projétil. Fonte: Autor}
+    \label{fig:obl}
+\end{figure}
+
+Note que o caso com coeficiente de arrasto nulo apresenta tempo de subida igual ao de queda. O módulo da velocidade, nesse caso, tem o comportamento de uma parábola com concavidade para cima, descrescendo até o instante em que o projétil atinge a altura máxima e aumentando na mesma taxa  após isso. O cenário sem arrasto foi o que obteve a maior distância até a posição do pouso, de pouco mais de 120 metros, atingindo a altura máxima na metade dessa distância.
+
+Os lançamentos feitos com arrasto não nulo obtiveram um tempo de subida menor do que o de descida. A força de arrasto também proporcionou ao projétil uma queda mais íngreme, embora mais lenta. Pode-se perceber, também, que a inserção do atrito do ar no modelo reduz drasticamente a distância horizontal total do lançamento. Os testes com \pyth{drag = 0.25} e \pyth{drag = 0.5} obtiveram distância total próxima de 8 metros e 5 metros, respectivamente.
+
+Por fim, a Figura \ref{fig:hor} exibe simulações que envolvem lançamentos horizontais, isto é, zerando a componente vertical da velocidade inicial do projétil. Também foi definida uma altura maior, de $10 m$, para a posição inicial do lançamento, além de uma velocidade de $80\ m/s$.
+
+\begin{figure}[H]
+\center
+    \includegraphics [scale = 0.6]{Figures/ex2_horiz.png}
+    \caption{Simulações com lançamento horizontal do projétil. Fonte: Autor}
+    \label{fig:hor}
+\end{figure}
+Houveram duas principais diferenças perceptíveis pelos gráficos da Figura \ref{fig:hor}. A primeira é que, como no caso sem atrito a única força agindo sobre o projétil é a força peso, a magnitude da velocidade tende a aumentar, afinal o projétil está sendo acelerado verticalmente para baixo. Enquanto isso, no caso em que considera-se o atrito do ar, a força de arrasto aumenta proporcionalmente à velocidade, até que iguala-se à força peso, fazendo com que a velocidade do objeto convirja para um valor que mantém-se constante até o pouso.
+
+
+\section{LRC Circuit}
+Considere um circuito RLC com $L\ =\ 1.00\ H$, $R\ =\ 1.00\times10^2\ \Omega $ , $C\ =\ 1.00\times10^{-4}\ F$, e $V\ =\ 1.00\times10^3\ V$. Suponha que não há carga no capacitor e nem corrente circulando  no sistema quando uma bateria é inserida no instante $t = 0$. Use um modelo computacional para descobrir a corrente e a carga no capacitor em função do tempo. Descreva como o sistema se comporta com decorrer do tempo.
+
+Considerando a Lei de Ohm
+$$v_R(t) = R i(t),$$
+e algumas relações básicas de circuitos elétricos 
+$$v_L(t) = L\ \frac{di(t)}{dt},\ \ \ v_L(t) = L\ \frac{di(t)}{dt},\ \  $$
+$$i(t) = C\frac{dv_C(t)}{dt},\ \ \ \ \ \ v_c(t) = \frac{1}{C}\ q(t),$$
+podemos, a partir da  Lei das Tensões de Kirchoff, obter
+$$v(t) = R\ i(t) + L\ \frac{di(t)}{dt} + \frac{1}{C}\ q(t)$$
+$$\implies v(t) = \frac{1}{C}\ q(t) + R\ \dot{q}(t) + L\ \ddot{q}(t)$$
+$$\implies \ddot{q}(t) = \frac{1}{L}\left(v(t) -\frac{1}{C}\ q(t) - R\ \dot{q}(t)\right).$$
+A Figura \ref{fig:lrc_block} apresenta um diagrama de blocos desenhado para a EDO de 2ª ordem obtida.
+
+\begin{figure}[H]
+\center
+    \includegraphics [scale = 0.25]{Figures/block_lrc.png}
+    \caption{Diagrama de blocos para o Circuito RLC. Fonte: Autor.}
+    \label{fig:lrc_block}
+\end{figure}
+
+Assim, podemos montar a função
+$$\implies \begin{pmatrix}\dot{q}(t) \\ q(t) \end{pmatrix} = \begin{pmatrix}\frac{1}{L}\left(v(t) -\frac{1}{C}\ q(t) - R\ \dot{q}(t)\right) \\ \dot{q(t)}\end{pmatrix},$$
+que pode ser introduzida no modelo computacional, cujo código está disposto no Listing \ref{lst:lrc}.
+
+
+\begin{python}
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.integrate import solve_ivp
+
+# define constants
+L = 1.00 # Inductance (Henry)
+R = 100 # Resistance (Ohm)
+C = 0.0001 # Capacitance (Farad)
+
+V = lambda t: 1000 # test 1 : constant Voltage (Volt)
+#V = lambda t: 5*np.cos(t) # test 2 : sinusoidal
+
+t_arr = np.linspace(0,0.5,200)# array with sampling times
+
+# Define the ODE
+# dy/dt = func(...)
+# y = [i(t), q(t)]
+def func(t, y, L, R, C, V):
+    return [(V(t) - y[1]/C - R*y[0])/L, y[0]]
+
+#Solve the ODE using scipy.integrate.solve_ivp (initial value problem)             
+sol = solve_ivp(func, [0,0.5], [0.0, 0.0], args=(L,R,C,V), t_eval = t_arr)
+
+fig, axs = plt.subplots(1, 2, figsize=(12,4))
+fig.suptitle('Electric Current and Charge on the RLC System')
+axs[0].plot(sol.t, sol.y[0])
+axs[0].set(xlabel='Elapsed Time(s)', ylabel='Electric Current (A)')
+axs[0].grid()
+axs[1].plot(sol.t, sol.y[1])
+axs[1].set(xlabel='Elapsed Time(s)', ylabel='Electric Charge (C)')
+axs[1].grid()
+plt.show()
+\end{python}
+\begin{lstlisting}[frame=none,caption={Código para a simulação do circuito RLC},captionpos=t,label=lst:lrc]
+\end{lstlisting}
+
+O primeiro teste realizado para este sistema foi utilizando os valores fornecidos no enunciado, com uma fonte de tensão constante de 1000 V. O resultado para esse caso é apresentado na Figura \ref{fig:lrc}.
+
+\begin{figure}[H]
+\center
+    \includegraphics [scale = 0.45]{Figures/lrc.png}
+    \caption{Simulação computacional do Circuito RLC com tensão elétrica constante. Fonte: Autor}
+    \label{fig:lrc}
+\end{figure}
+Pode-se notar que a tensão constante faz com que a corrente e a carga tenham comportamento constante com o decorrer do tempo, com exceção dos primeiros 0.1 segundos. Nestes primeiros instantes, a variação na corrente e na carga do sistema ocorre como reação à inserção repentina da fonte de tensão (bateria), sendo este comportamento conhecido por transiente ou resposta ao degrau. O comportamento é coerente com as condições inicais nulas definidas.
+
+Foi também feito um experimento inserindo-se uma tensão oscilatória no sistema. Isso poderia ser feito, por exemplo, substituindo a bateria por um gerador de funções. Assim, tomando $V(t) = 1000 cos(t)$, temos os resultados apresentados na Figura \ref{fig:lrc_cos}. Note que os gráficos da parte de cima abordam os 0.5 segundos iniciais de simulação e os de baixo abordam os primeiros 10 segundos, tendo sido alterado devidamente o intervalo de integração no código.
+
+\begin{figure}[H]
+\center
+    \includegraphics [scale = 0.55]{Figures/ex3_5cos.png}
+    \caption{Simulação computacional do Circuito RLC com tensão de entrada $V(t) = 1000cos(t)$. Fonte: Autor}
+    \label{fig:lrc_cos}
+\end{figure}
+
+Perceba que o mesmo comportamento inicial, referente à resposta ao degrau ocorre quando a fonte é ligada. Entretanto, com a entrada senoidal, a corrente e a carga tendem a oscilar com período constante, o que é conhecido por regime permanente senoidal. O comportamento também está coerente com as condições iniciais nulas e o funcionamento real desse tipo de circuito.
+
+\section{Plastic Ball Motion Model}
+
+Um certo modelo do movimento de uma leve bola de plástico arremessada verticalmente no ar é dado por
+$$\large m\ddot{x}+c\dot{x}+mg=0,\ \ x(0) =0,\ \ \dot{x}(0) =v_0.$$
+Aqui, $m$ é a massa da bola, $g\ =\ 9.8\ m\ s^{-2}$ é a aceleração da gravidade e $c$ representa o arrasto proveniente do atrito com o ar. Como não há a presença do termo $x$ (altura), pode-se traduzir o modelo para uma equação diferencial de primeira ordem para a velocidade $v(t) = x'(t)$: 
+$$\large m\dot{v}+cv+mg=0.$$
+$$\large \implies \dot{v} = \frac{1}{m}\left(-cv -mg \right)$$
+Um desenho do diagrama de blocos para essa EDO está apresentada na Figura \ref{fig:plastic_block}.
+\begin{figure}[H]
+\center
+    \includegraphics [scale = 0.35]{Figures/plastic_ball_block.png}
+    \caption{Diagrama de blocos para o modelo de primeira ordem do lançamento da bola de plástico. Fonte: Autor}
+    \label{fig:plastic_block}
+\end{figure}
+
+O código para o modelo de primeira ordem está apresentado no Listing \ref{lst:plastic}.
+
+\begin{python}
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.integrate import solve_ivp
+
+def plastic_ball(m_in,c_in,v0_in):
+        
+    # Define constants
+    m = m_in # mass (kg)
+    g = 9.8 # gravitational acceleration (m / s^2)
+    c = c_in # damping constant (kg/s)
+    v0 = v0_in # velocity (m/s)
+    t_arr = np.linspace(0,10,1000) # array with sampling times (s)
+
+    #dy/dt = func(...)
+    # y = [v]
+    def func(t, y, m, g, c):
+        v = y
+        return (-c*v - m*g)/m
+
+    # Solve the ODE using scipy.integrate.solve_ivp (initial value problem)
+    sol = solve_ivp(func, [0,10],[v0],args=(m, g, c), t_eval=t_arr)
+
+    # Find maximum height
+    max_h_sample = np.where(sol.y[0] == min(sol.y[0], key=abs))
+
+    # Plotting
+    fig, ax = plt.subplots()    
+    ax.plot(sol.t, sol.y[0], zorder=1)
+    ax.scatter(sol.t[max_h_sample], 0,c ='red' , label = f'T( {sol.t[max_h_sample][0]:.3f} s) ~= 0',zorder=2)
+    ax.set(xlabel='Elapsed Time(s)', ylabel='Velocity (m/s)',
+       title=f'Plastic Ball Motion: m = {m}, g = {g}, c = {c}, v0 = {v0}')
+    ax.legend()
+    ax.grid()
+    plt.show()
+
+#=================================================================
+#Define inputs
+m = 0.25
+g = 9.8 
+c = 0.10  #damping
+v0 = 50
+pos0 = 0.0 # initial position (m)
+
+plastic_ball(m,c,v0)
+\end{python}
+\begin{lstlisting}[frame=none,caption={Código para o modelo de lançamento vertical de uma bola leve de plástico},captionpos=t,label=lst:plastic]
+\end{lstlisting}
+
+A Figura \ref{fig:ex4} apresenta uma comparação de dois testes feitos: um considerando o atrito do ar, controlado pela constante $c$, e outro desprezando-o.
+
+\begin{figure}[H]
+\center
+    \includegraphics [scale = 0.45]{Figures/ex4_vterm.png}
+    \caption{Simulação computacional do  lançamento vertical de uma bola de plástico com e sem arrasto. Fonte: Autor}
+    \label{fig:ex4}
+\end{figure}
+Perceba que o teste sem arrasto apresenta tempo de subida igual ao de descida, pois a velocidade troca de sinal exatamente na metade do tempo em que ela retorna (em módulo) ao seu valor inicial. Neste cenário, a velocidade decresce linearmente na subida e cresce linearmente na descida. Já no caso com atrito do ar, a bola, enquanto está caindo, para de acelerar e tende a uma velocidade constante, conhecida por \textbf{velocidade terminal}. Esse fenômeno ocorre justamente pois o termo de atrito é proporcional à velocidade e, ao mesmo tempo, controla sua variação.
+
+A questão também pede os gráficos da posição para o caso em que $\frac{c}{m} = 5 s^{-1}$. Para isso, modificaremos o  código para simular o modelo com a EDO de segunda ordem
+$$\large m\ddot{x}+c\dot{x}+mg=0,\ \ x(0) =0,\ \ \dot{x}(0) =v_0.$$
+As principais modificações necessárias no código estão apresentadas no Listing \ref{lst:2och}, sem considerar as alterações na montagem dos gráficos.
+\begin{python}
+#dy/dt = func(...)
+# y = [v,pos]
+def func(t, y, m, g, c):
+    v = y[0]
+    return [(-c*v - m*g)/m, v]
+
+# Solve the ODE using scipy.integrate.solve_ivp (initial value problem)
+sol = solve_ivp(func, [0,3],[v0,0.0],args=(m, g, c), t_eval=t_arr)
+\end{python}
+\begin{lstlisting}[frame=none,caption={Modificações no código do lançamento da bola de plástico},captionpos=t,label=lst:2och]
+\end{lstlisting}
+
+
+
+Com o novo modelo, podemos acompanhar a velocidade e a altura da bola nos testes com $\frac{c}{m} = 5 s^{-1}$, apresentados na Figura \ref{fig:cm5}.
+
+\begin{figure}[H]
+\center
+    \includegraphics [scale = 0.40]{Figures/ex4_cm5.png}
+    \caption{Simulação computacional do lançamento vertical de uma bola de plástico com $\frac{c}{m} = 5s^{-1}$ sujeita a diferentes valores de $v_0$. Fonte: Autor}
+    \label{fig:cm5}
+\end{figure}
+
+Pode-se notar que maiores velocidades inicias fazem com que a bola atinja maior altura máxima. Entretanto, a velocidade terminal e a proporção entre o tempo de subida e descida não parecem sofrer muitas alterações. Isso indica que essas medidas estão fortemente associadas com a razão entre a constante de arrasto e a massa, que foi mantida constante durante as simulações.
+
+\section{Predator-Prey Model}
+O modelo Predador-Presa é um modelo de dinâmica populacional que descreve a interação entre duas espécies. As equações de Lotka-Volterra 
+$$\large \dot{x} = x - axy,$$
+$$\large \dot{y} = -y + bxy$$
+são uma simplificação razoável para estudos introdutórios do modelo em questão. Nelas, $x$ representa a população de presa e $y$, de predador. Além disso, $a$ e $b$ representam taxas de interação, ou contato, entre as espécies.
+A Figura \ref{fig:block_pp}, retirada de \cite{odeSimulink}, apresenta um diagrama de blocos para o modelo Predador-Presa, utilizando como exemplo coelhos e raposas.
+\begin{figure}[H]
+\center
+    \includegraphics [scale = 0.45]{Figures/block_predprey.png}
+    \caption{Diagrama de blocos para o modelo Predador-Presa. Fonte: \cite{odeSimulink}}
+    \label{fig:block_pp}
+\end{figure}
+O código para o modelo Predador-Presa é apresentado no Listing \ref{lst:pred-prey}
+
+\begin{python}
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.integrate import solve_ivp
+
+def predator_prey(x0,y0,a,b):
+    #x0: inital prey population (e.g Rabbits)
+    #y0: initial predator population (e.g Foxes)
+    #a: contact coefficient of preys with predators
+    #b: contact coefficient of predators with preys
+
+    # array with sampling times
+    t_arr = np.linspace(0,50,10000)
+
+    # dy/dt = func(...)
+    # y = [x,y]
+    def func(t,y,a,b):
+        return [y[0] - a*y[0]*y[1],
+                -y[1] + b*y[0]*y[1],]
+
+    sol = solve_ivp(func, [0,50],[x0,y0], args=(a,b), t_eval = t_arr)
+
+    fig, axs = plt.subplots(1, 2, figsize=(12,4))
+    fig.suptitle(f'Predator-Prey Model: x0 = {x0}, y0 = {y0}, a = {a}, b = {b}')
+    axs[0].plot(sol.t, sol.y[0], label = 'Prey')
+    axs[0].set(xlabel='Elapsed Time (days)', ylabel='Population')
+    axs[0].plot(sol.t, sol.y[1], label = 'Predator')
+    axs[0].grid()
+    axs[0].legend()
+
+    axs[1].plot(sol.y[0], sol.y[1])
+    axs[1].set(xlabel='Prey Population', ylabel='Predator Population')
+    axs[1].grid()
+    plt.show()
+
+    if 0 == any(sol.y[0]):
+        print('Prey was Extinguished')
+    if 0 == any(sol.y[1]):
+        print('Predator was Extinguished')
+    
+#=====================================================================
+#Define inputs
+x0 = 150
+y0 = 100
+a = 0.01
+b = 0.01
+
+predator_prey(x0,y0,a,b)
+\end{python}
+\begin{lstlisting}[frame=none,caption={Código do Modelo Predador-Presa},captionpos=t,label=lst:pred-prey]
+\end{lstlisting}
+
+Primeiramente foram feitos alguns testes com valores típicos, utilizando uma  população inicial próxima e experimentando diferentes taxas de contato entre as espécies. O resultado desses testes estão apresentados na Figura \ref{fig:predprey}.
+
+\begin{figure}[H]
+\center
+    \includegraphics [scale = 0.40]{Figures/ex5.png}
+    \caption{Simulação do modelo Predador-Presa com diferentes taxas de contato. Fonte: Autor}
+    \label{fig:predprey}
+\end{figure}
+Note que a população das espécies oscila de forma levemente defasada, mas em equilíbrio. Quando as taxas de contato são iguais, a amplitude máxima da oscilação é próxima da população inicial de presa (150) e o centro da oscilação é próximo da população inical de predadores (100). Nos casos em que $a$ ou $b$ são maiores, a amplitude máxima de $x$ e $y$, respectivamente, seguem a mesma tendência. O gráfico da população de presa pela população de predadores apresenta diversas linhas, majoritariamente sobrepostas, formando um formato ovalado.
+
+
+O próximo conjunto de testes, abordados pela Figura \ref{fig:prey}, foi feito com população inicial de presa 5 vezes maior do que a de predador, também experimentando com os valores de $a$ e $b$.
+\begin{figure}[H]
+\center
+    \includegraphics [scale = 0.40]{Figures/ex5_prey.png}
+    \caption{Simulação do modelo Predador-Presa com maior população inicial de Presa. Fonte: Autor}
+    \label{fig:prey}
+\end{figure}
+
+Note que o equilíbrio oscilatório segue ocorrendo, mas com uma defasagem maior. Também é interessante notar que os picos são mais agudos e os vales mais largos. Quando as taxas de contato são iguais, a amplitude máxima da oscilação segue próxima da população inicial de presa (500). Nos casos em que $a$ ou $b$ são maiores, a amplitude máxima de $x$ e $y$, respectivamente, seguem a mesma tendência. O gráfico da população de presa pela população de predadores apresenta um formato menos ovalado e mais triangular, se aproximando da origem.
+
+Por fim, a Figura \ref{fig:pred} apresenta testes com populacão inicial de predadores 5 vezes superior à de presas, também experimentando com os valores de $a$ e $b$.
+
+\begin{figure}[H]
+\center
+    \includegraphics [scale = 0.40]{Figures/ex5_predator.png}
+    \caption{Simulação do modelo Predador-Presa com maior população inicial de Predador. Fonte: Autor}
+    \label{fig:pred}
+\end{figure}
+Percebe-se que o equilíbrio oscilatório segue ocorrendo, com os picos agudos e vales largos, assim como no teste com excedente de presa. Uma diferença notável é que, agora, quando as taxas de contato são iguais, a amplitude máxima da oscilação é próxima da população inicial de \textbf{predadores} (500). Nos casos em que $a$ ou $b$ são maiores, a amplitude máxima de $x$ e $y$, respectivamente, seguem a mesma tendência. O gráfico da população de presa pela população de predador tem o mesmo comportamento triangular com pontas arredondadas dos testes com excedente de presa.
+\newpage
+
+\printbibliography
+
+\end{document}
+
+
+

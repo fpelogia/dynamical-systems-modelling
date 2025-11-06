@@ -1,0 +1,91 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.1 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated as
+% required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+\datalist[entry]{nyt/global//global/global}
+  \entry{RK45}{article}{}
+    \name{author}{2}{}{%
+      {{hash=DJ}{%
+         family={Dormand},
+         familyi={D\bibinitperiod},
+         given={J.R.},
+         giveni={J\bibinitperiod},
+      }}%
+      {{hash=PP}{%
+         family={Prince},
+         familyi={P\bibinitperiod},
+         given={P.J.},
+         giveni={P\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{DJPP1}
+    \strng{fullhash}{DJPP1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{D}
+    \field{sortinithash}{D}
+    \field{abstract}{%
+    A family of embedded Runge-Kutta formulae RK5 (4) are derived. From these
+  are presented formulae which have (a) ‘small’ principal truncation terms
+  in the fifth order and (b) extended regions of absolute stability.%
+    }
+    \verb{doi}
+    \verb https://doi.org/10.1016/0771-050X(80)90013-3
+    \endverb
+    \field{issn}{0377-0427}
+    \field{number}{1}
+    \field{pages}{19 \bibrangedash  26}
+    \field{title}{A family of embedded Runge-Kutta formulae}
+    \verb{url}
+    \verb http://www.sciencedirect.com/science/article/pii/0771050X80900133
+    \endverb
+    \field{volume}{6}
+    \field{journaltitle}{Journal of Computational and Applied Mathematics}
+    \field{year}{1980}
+  \endentry
+
+  \entry{odeSimulink}{misc}{}
+    \name{author}{1}{}{%
+      {{hash=HR}{%
+         family={Herman},
+         familyi={H\bibinitperiod},
+         given={R.},
+         giveni={R\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{HR1}
+    \strng{fullhash}{HR1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{H}
+    \field{sortinithash}{H}
+    \field{title}{Solving Differential Equations Using Simulink}
+    \verb{url}
+    \verb http://people.uncw.edu/hermanr/mat361/Simulink/ODE\_Simulink.pdf
+    \endverb
+    \field{year}{2017}
+  \endentry
+
+  \entry{scipy}{misc}{}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{S}
+    \field{sortinithash}{S}
+    \field{note}{Disponível em https://www.scipy.org/scipylib/index.html}
+    \field{title}{SciPy library}
+  \endentry
+\enddatalist
+\endinput
