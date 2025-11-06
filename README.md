@@ -38,7 +38,7 @@ This model estimates the **cooling constant** `k` and predicts the time when the
 
 A projectile is launched under gravity and aerodynamic drag proportional to velocity:
 
-$$
+```math
 \begin{pmatrix}
 \ddot{x}\\
 \ddot{y}
@@ -51,7 +51,7 @@ k\sqrt{\dot{x}^2+\dot{y}^2}
 \dot{x}\\
 \dot{y}
 \end{pmatrix}
-$$
+```
 
 The simulation integrates position and velocity simultaneously, displaying time evolution of velocity magnitude, height, and the projectile’s trajectory.
 
