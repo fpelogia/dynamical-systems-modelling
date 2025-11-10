@@ -139,6 +139,10 @@ The mathematical representation of this model is given by the following system o
 
 Each equation describes the evolution of one compartment based on the parameters **β** and **γ**, which represent the transition rates between compartments.
 
+<p align="center">
+  <img src="./report/Figures/sir.png" alt="SIR Model" width="500"/>
+</p>
+
 ---
 
 ## ⚙️ Technologies
