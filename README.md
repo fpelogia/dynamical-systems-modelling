@@ -115,6 +115,30 @@ The simulation explores oscillatory behavior and equilibrium under varying conta
   <img src="./report/Figures/ex5.png" alt="Predator Prey Model" width="500"/>
 </p>
 
+### 6. Susceptible-Infected-Recovered (SIR) Model
+
+The **SIR model** (*Susceptible–Infected–Recovered*), introduced in 1927 [Kermack and McKendrick, 1927], is one of the most classical ways to represent the evolution of an epidemic. It assumes that individuals can belong to three compartments:
+
+* **Susceptible:** Individuals who have not yet been infected by the disease but can still become infected;
+* **Infected:** Individuals currently infected by the disease;
+* **Recovered:** Individuals who no longer have the disease.
+
+The mathematical representation of this model is given by the following system of differential equations:
+
+```math
+\frac{dS(t)}{dt} = -\beta S(t) I(t)
+```
+
+```math
+\frac{dI(t)}{dt} = \beta S(t) I(t) - \gamma I(t)
+```
+
+```math
+\frac{dR(t)}{dt} = \gamma I(t)
+```
+
+Each equation describes the evolution of one compartment based on the parameters **β** and **γ**, which represent the transition rates between compartments.
+
 ---
 
 ## ⚙️ Technologies
@@ -167,4 +191,4 @@ Each script generates plots and prints numerical results.
 
 **Frederico José Ribeiro Pelogia**  
 Department of Science and Technology, Federal University of São Paulo (UNIFESP)  
-*Originally developed during the Dynamic Systems Control course (2020).*
+*Most simulations were originally developed during the Dynamic Systems Control course (2020).*
