@@ -98,10 +98,13 @@ def rocket():
     axs[0].set_xlabel('t (s)')
     axs[0].set_ylabel('Position (m)')
     axs[0].plot(t, pos)
+    axs[0].scatter(t_prop[-1], pos_prop[-1], c='r', label='fuel burnout')
+    axs[0].legend()
     axs[1].set_xlabel('t (s)')
     axs[1].set_ylabel('Velocity (m/s)')
     axs[1].plot(t, vel)
-
+    axs[1].scatter(t_prop[-1], vel_prop[-1], c='r', label='fuel burnout')
+    axs[1].legend()
     plt.show()
 
 #=================================================================
