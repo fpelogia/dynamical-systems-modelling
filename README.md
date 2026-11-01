@@ -77,6 +77,9 @@ The code computes **current** and **charge** over time for both constant and sin
 <p align="center">
   <img src="./report/Figures/lrc.png" alt="RLC Circuit Simulation" width="500"/>
 </p>
+<p align="center">
+  <img src="./report/Figures/ex3_5cos.png" alt="RLC Circuit Simulation with Sinusoidal Input" width="500"/>
+</p>
 
 ---
 
@@ -143,6 +146,36 @@ Each equation describes the evolution of one compartment based on the parameters
   <img src="./report/Figures/sir.png" alt="SIR Model" width="500"/>
 </p>
 
+### 7. Rocket Dynamics with Variable Mass and Air Drag
+
+A vertically launched rocket with variable mass, constant fuel burn rate, gravity, and linear air resistance is modeled in two phases.
+
+**Propelled phase:**
+
+$$
+\dot{x}=v
+$$
+
+$$
+\dot{v}=\frac{cv_r-gM_0-bv}{M_0-ct}
+$$
+
+**Free-motion phase (after fuel burnout):**
+
+$$
+\dot{x}=v
+$$
+
+$$
+\dot{v}=-g-\frac{b}{M_r}v
+$$
+
+The simulation integrates both phases, considering the rocket's decreasing mass during propulsion and constant mass after fuel burnout. It captures the complete vertical motion, including ascent, maximum altitude, and descent.
+
+<p align="center">
+  <img src="./report/Figures/rocket.png" alt="Rocket Dynamics" width="500"/>
+</p>
+
 ---
 
 ## ⚙️ Technologies
@@ -188,9 +221,13 @@ Each script generates plots and prints numerical results.
 1. **J.R. Dormand & P.J. Prince (1980)** — *A family of embedded Runge–Kutta formulae*, *Journal of Computational and Applied Mathematics*, 6(1), 19–26.  
 2. **R. Herman (2017)** — *Solving Differential Equations Using Simulink*, [link](http://people.uncw.edu/hermanr/mat361/Simulink/ODE_Simulink.pdf).  
 3. **SciPy Library** — [https://www.scipy.org](https://www.scipy.org)
+4. **J. López Gondar & R. Cipolatti (2009)** — *Iniciação à Física Matemática: Modelagem de Processos e Métodos de Solução*. Rio de Janeiro: IMPA. (Coleção Matemática e Aplicações).
+---
+## License
+
+This project is licensed under the **BSD 3-Clause License**. See the [LICENSE.txt](./LICENSE.txt) file for details.
 
 ---
-
 ## Author
 
 **Frederico José Ribeiro Pelogia**  
